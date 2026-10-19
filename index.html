@@ -161,6 +161,19 @@
   .rsvp-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,4vw,20px);line-height:1.6;color:rgba(248,245,251,.88);margin-bottom:24px;}
   .rsvp-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;background:transparent;border:1px solid var(--lilac);color:var(--cream);font-family:'Jost',sans-serif;font-size:11px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;padding:16px;border-radius:3px;text-decoration:none;transition:background .25s,color .25s;}
   .rsvp-btn:hover{background:var(--lilac);color:var(--purple-deep);}
+  .rsvp-card label{display:block;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--blue-light);margin-bottom:10px;}
+  .rsvp-input{width:100%;background:rgba(248,245,251,.08);border:1px solid rgba(185,163,214,.35);border-radius:3px;padding:15px 16px;color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:19px;text-align:center;outline:none;transition:border-color .2s,background .2s;}
+  .rsvp-input::placeholder{color:rgba(248,245,251,.4);font-style:italic;}
+  .rsvp-input:focus{border-color:var(--lilac);background:rgba(248,245,251,.12);}
+  button.rsvp-btn{margin-top:16px;cursor:pointer;}
+  .rsvp-result{margin-top:24px;display:none;}
+  .rsvp-result .rtitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;}
+  .rsvp-result .rmsg{font-size:13px;color:rgba(248,245,251,.78);margin-top:8px;line-height:1.6;}
+  .rsvp-result.ok .rtitle{color:#D9CBF0;}
+  .rsvp-result.err .rtitle{color:#E9C9D8;}
+  .wa-btn{display:none;align-items:center;justify-content:center;gap:10px;margin:22px auto 0;background:#25D366;color:#fff;padding:16px 28px;border-radius:3px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;width:fit-content;transition:transform .2s,filter .2s;}
+  .wa-btn:hover{transform:translateY(-2px);filter:brightness(1.05);}
+  .wa-btn svg{width:18px;height:18px;}
 
   /* FOOTER */
   footer{padding:64px 22px 46px;text-align:center;background:var(--night);position:relative;}
@@ -321,8 +334,15 @@
       <p class="sec-label reveal">rsvp</p>
       <h2 class="sec-title reveal">Confirme sua presença</h2>
       <div class="rsvp-card reveal">
-        <p class="rsvp-text">Contamos com você! Por favor, confirme sua presença pelo nosso site para que possamos preparar tudo com carinho.</p>
-        <a class="rsvp-btn" href="https://sites.icasei.com.br/chaianeeluan/home" target="_blank" rel="noopener">Confirmar presença</a>
+        <p class="rsvp-text">Contamos com você! Digite seu nome como está no convite para confirmar sua presença.</p>
+        <form id="rsvpForm" autocomplete="off">
+          <label for="rsvpName">Seu nome</label>
+          <input class="rsvp-input" id="rsvpName" type="text" placeholder="Digite seu nome" required>
+          <button class="rsvp-btn" type="submit">Confirmar presença</button>
+        </form>
+        <div class="rsvp-result" id="rsvpResult"><p class="rtitle"></p><p class="rmsg"></p></div>
+        <a class="wa-btn" id="waBtn" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 1 1 7.99 4.42zm8.02-17.45A11.27 11.27 0 0 0 12.04.75C5.8.75.72 5.83.72 12.07c0 2 .52 3.94 1.51 5.66L.62 23.25l5.65-1.48a11.3 11.3 0 0 0 5.77 1.47h.01c6.24 0 11.32-5.08 11.32-11.32 0-3.02-1.18-5.87-3.31-8z"/></svg>Avisar aos noivos</a>
+        <p class="rsvp-text" style="margin:26px 0 0;font-size:15px;opacity:.75;">Lista de presentes e mais informações no <a href="https://sites.icasei.com.br/chaianeeluan/home" target="_blank" rel="noopener" style="color:var(--blue-light);">nosso site</a>.</p>
       </div>
     </div>
   </section>
@@ -447,6 +467,71 @@ function startCountdown(){
   }
   upd(); timer=setInterval(upd,1000);
 }
+
+// ─── RSVP: lista de convidados + aviso pelo WhatsApp ───
+// Um nome por item. Acentos e maiúsculas não importam.
+const CONVIDADOS = [
+  "Ivanete", "Eduardo", "Pastor", "Pastora", "Jessica", "Soninha", "Rodrigo", "Jhonatan",
+  "Vitor", "Marcia", "Luiza", "Tia Silvia", "Karen", "Gustavo", "Nelly", "Gabriel",
+  "Miguel", "Tio Bal", "Abatha", "Martha", "Arilson", "Diogo", "Leticia", "Yasmim",
+  "Wagner", "Tio Faete", "David", "Dior", "Geovanna", "Tio Ricardo", "Lucimara", "Liliane",
+  "Eldizia", "Monstrinho", "Renato", "Diego", "Rebeca", "Tio Ismar", "Miguel", "Silvana",
+  "Fran", "Ketelin", "Gibson", "Kimberlyn", "Dudinha", "Kaique", "Eduardo", "Nathan",
+  "Nathalia", "Mulher do Natan", "Graça", "Arthur", "Maria", "Barbara", "Douglas", "Denise",
+  "San", "Sandy", "Vera", "Vini", "Ivone", "Vitória", "Solange", "Valéria",
+  "Rebeca", "Leticia", "Adriana", "Paulo", "Fátima", "Manoel", "Fátima", "Carlos",
+  "Livia", "Jeovane", "Jean", "Ravi", "Namorada do Ravi", "Tia Jack", "Tio G", "Gerferson",
+  "Luiz Miguel", "Maia", "Tuca", "Ricardo", "Gabi", "Manu", "Mundinho", "Raissa",
+  "Vicente", "Lyon", "PCP Reinado", "Cintia", "Jefferson", "Ryan", "Eitor", "Lucas",
+  "Lais", "Emilly", "Namorado da Emilly", "Vó Eliana", "Tia Bia", "Tio Juliano", "João Victor", "Joel",
+  "William", "Joaldo", "Fran Tia", "Leandro da Fran", "Emanuel", "Ana Luiza", "Kaio namorado da Ana", "Nicolly",
+  "Mimo", "Karla", "Ruan", "Tia Paty", "Raimundo", "Marquinho", "Luana", "Gabriel da Tia Rene",
+  "Ana", "Tia Cris", "Luiz", "Cauan", "Tia Rosa", "Leandro", "Maria Cristina", "Weber",
+  "Daiane", "Ágata", "Geninho",
+];
+const WHATSAPP_NOIVOS = '5511998704431';
+
+(function(){
+  const norm=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  const TITULOS=['tia','tio','vo','vovo','pr','pra'];
+  const semTitulo=t=>{const w=t.split(' ');return (w.length>1&&TITULOS.includes(w[0]))?w.slice(1).join(' '):t;};
+  const lista=CONVIDADOS.map(n=>({nome:n.trim(),n:norm(n)}));
+
+  function encontrar(digitado){
+    const d=norm(digitado); if(!d) return null;
+    const ds=semTitulo(d), dw=ds.split(' ');
+    return lista.find(c=>c.n===d) ||
+           lista.find(c=>semTitulo(c.n)===ds) ||
+           lista.find(c=>{const cw=semTitulo(c.n).split(' ');return cw.every(w=>dw.includes(w));}) ||
+           null;
+  }
+
+  const form=document.getElementById('rsvpForm');
+  const input=document.getElementById('rsvpName');
+  const res=document.getElementById('rsvpResult');
+  const wa=document.getElementById('waBtn');
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    const digitado=input.value.trim();
+    if(!digitado) return;
+    const conv=encontrar(digitado);
+    res.style.display='block';
+    if(conv){
+      res.className='rsvp-result ok';
+      res.querySelector('.rtitle').textContent='Presença confirmada! 💜';
+      res.querySelector('.rmsg').textContent='Que alegria, '+digitado+'! Toque no botão abaixo para avisar os noivos pelo WhatsApp.';
+      const msg='Olá, Chaiane e Luan! 💜 Aqui é '+digitado+' e confirmo minha presença no casamento de vocês, dia 20/02. Será uma alegria celebrar esse dia com vocês!';
+      wa.href='https://wa.me/'+WHATSAPP_NOIVOS+'?text='+encodeURIComponent(msg);
+      wa.style.display='inline-flex';
+    }else{
+      res.className='rsvp-result err';
+      res.querySelector('.rtitle').textContent='Nome não encontrado';
+      res.querySelector('.rmsg').textContent='Confira se digitou seu nome como está no convite. Se precisar, fale com os noivos.';
+      wa.style.display='none';
+    }
+  });
+})();
 </script>
 </body>
 </html>
